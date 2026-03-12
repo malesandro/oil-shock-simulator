@@ -26,12 +26,18 @@ export default function SimulatorTab({ params, setParams }) {
 
       {/* Presets */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 16, flexWrap: 'wrap' }}>
-        {Object.entries(PRESETS).map(([k, pr]) => (
-          <button key={k} onClick={() => setParams(pr)} style={{
-            background: C.card, color: C.textDim, border: `1px solid ${C.border}`,
-            borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer',
-          }}>{pr.label}</button>
-        ))}
+        {Object.entries(PRESETS).map(([k, pr]) => {
+          const active = Object.keys(pr).every((key) => key === 'label' || params[key] === pr[key]);
+          return (
+            <button key={k} onClick={() => setParams(pr)} style={{
+              background: active ? C.accent + '22' : C.card,
+              color: active ? C.accent : C.textDim,
+              border: `1px solid ${active ? C.accent + '44' : C.border}`,
+              borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer',
+              fontWeight: active ? 600 : 400, transition: 'all 0.15s',
+            }}>{pr.label}</button>
+          );
+        })}
       </div>
 
       {/* Controls */}
