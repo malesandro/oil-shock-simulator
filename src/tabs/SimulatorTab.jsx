@@ -3,7 +3,7 @@ import { C } from '../theme';
 import { runSimulation, computePercentiles, runSensitivity, PRESETS } from '../engine/simulation';
 import { Slider, Toggle, Sparkline, DistChart } from '../components/ui';
 
-export default function SimulatorTab({ params, setParams }) {
+export default function SimulatorTab({ params, setParams, priceInfo }) {
   const set = useCallback((k, v) => setParams((p) => ({ ...p, [k]: v })), [setParams]);
   const results = useMemo(() => runSimulation(params), [params]);
   const sensitivity = useMemo(() => runSensitivity(params), [params]);
@@ -27,9 +27,9 @@ export default function SimulatorTab({ params, setParams }) {
       {/* Presets */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 16, flexWrap: 'wrap' }}>
         {Object.entries(PRESETS).map(([k, pr]) => {
-          const active = Object.keys(pr).every((key) => key === 'label' || params[key] === pr[key]);
+          const active = Object.keys(pr).every((key) => key === 'label' || key === 'oilPrice' || params[key] === pr[key]);
           return (
-            <button key={k} onClick={() => setParams(pr)} style={{
+            <button key={k} onClick={() => setParams((p) => ({ ...pr, oilPrice: p.oilPrice }))} style={{
               background: active ? C.accent + '22' : C.card,
               color: active ? C.accent : C.textDim,
               border: `1px solid ${active ? C.accent + '44' : C.border}`,
@@ -43,7 +43,18 @@ export default function SimulatorTab({ params, setParams }) {
       {/* Controls */}
       <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: 16, marginBottom: 20 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
-          <Slider label="Current Oil (Brent)" value={params.oilPrice} onChange={(v) => set('oilPrice', v)} min={70} max={150} unit=" $/bbl" />
+          <Slider label="Oil Price (Brent)" value={params.oilPrice} onChange={(v) => set('oilPrice', v)} min={70} max={300} unit=" $/bbl" />
+              {priceInfo && priceInfo.source !== 'fallback' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: -4, marginBottom: 4 }}>
+                  <span style={{ color: '#22c55e', fontSize: 10 }}>Live: ${priceInfo.price}/bbl from {priceInfo.source}</span>
+                  {params.oilPrice !== Math.round(priceInfo.price) && (
+                    <button onClick={() => set('oilPrice', Math.round(priceInfo.price))} style={{
+                      background: 'transparent', border: '1px solid #22c55e44', borderRadius: 3,
+                      color: '#22c55e', fontSize: 9, padding: '1px 6px', cursor: 'pointer',
+                    }}>Reset to live</button>
+                  )}
+                </div>
+              )}
           <Slider label="Conflict Duration" value={params.conflictMonths} onChange={(v) => set('conflictMonths', v)} min={1} max={18} unit=" mo" color={C.red} />
           <Slider label="Hormuz Reopens" value={params.hormuzReopenMonth} onChange={(v) => set('hormuzReopenMonth', v)} min={0} max={18} color={C.blue} note={params.hormuzReopenMonth === 0 ? '(closed)' : ''} />
           <Slider label="EU Gas Storage" value={params.euGasStorage} onChange={(v) => set('euGasStorage', v)} min={10} max={60} unit="%" color={C.green} />

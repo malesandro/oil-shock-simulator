@@ -233,9 +233,9 @@ export const ACTUAL_2022 = {
  * Scenario presets
  */
 export const PRESETS = {
-  current: { label: 'Current', oilPrice: 100, conflictMonths: 3, hormuzReopenMonth: 0, euGasStorage: 27, reserveRelease: true, russiaGasCut: false, demandDestruction: 0.3, shockProb: 3 },
-  swift: { label: 'Swift', oilPrice: 100, conflictMonths: 1, hormuzReopenMonth: 2, euGasStorage: 27, reserveRelease: true, russiaGasCut: false, demandDestruction: 0.2, shockProb: 1 },
-  extended: { label: 'Extended', oilPrice: 100, conflictMonths: 6, hormuzReopenMonth: 5, euGasStorage: 27, reserveRelease: true, russiaGasCut: false, demandDestruction: 0.4, shockProb: 3 },
-  prolonged: { label: 'Prolonged', oilPrice: 100, conflictMonths: 10, hormuzReopenMonth: 0, euGasStorage: 27, reserveRelease: true, russiaGasCut: true, demandDestruction: 0.5, shockProb: 5 },
-  catastrophic: { label: 'Catastrophic', oilPrice: 100, conflictMonths: 18, hormuzReopenMonth: 0, euGasStorage: 27, reserveRelease: true, russiaGasCut: true, demandDestruction: 0.6, shockProb: 10 },
+  current: { label: 'Current', conflictMonths: 3, hormuzReopenMonth: 0, euGasStorage: 27, reserveRelease: true, russiaGasCut: false, demandDestruction: 0.3, shockProb: 3 },
+  swift: { label: 'Swift', conflictMonths: 1, hormuzReopenMonth: 2, euGasStorage: 27, reserveRelease: true, russiaGasCut: false, demandDestruction: 0.2, shockProb: 1 },
+  extended: { label: 'Extended', conflictMonths: 6, hormuzReopenMonth: 5, euGasStorage: 27, reserveRelease: true, russiaGasCut: false, demandDestruction: 0.4, shockProb: 3 },
+  prolonged: { label: 'Prolonged', conflictMonths: 10, hormuzReopenMonth: 0, euGasStorage: 27, reserveRelease: true, russiaGasCut: true, demandDestruction: 0.5, shockProb: 5 },
+  catastrophic: { label: 'Catastrophic', conflictMonths: 18, hormuzReopenMonth: 0, euGasStorage: 27, reserveRelease: true, russiaGasCut: true, demandDestruction: 0.6, shockProb: 10 },
 };

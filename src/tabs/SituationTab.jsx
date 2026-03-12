@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react';
 import { C } from '../theme';
-import { fetchOilPrice } from '../data/oilPrice';
 
 const THRESHOLDS = [
   {
@@ -90,18 +88,8 @@ function getHormuzStatus(price) {
   return { v: 'Reopening?', s: 'signals improving', color: '#3b82f6' };
 }
 
-export default function SituationTab() {
-  const [priceInfo, setPriceInfo] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchOilPrice().then((info) => {
-      setPriceInfo(info);
-      setLoading(false);
-    });
-  }, []);
-
-  const price = priceInfo?.price || 100;
+export default function SituationTab({ params, priceInfo }) {
+  const price = params.oilPrice;
   const t = getThreshold(price);
   const changeDollar = (price - PRE_WAR_PRICE).toFixed(0);
   const changePct = ((price - PRE_WAR_PRICE) / PRE_WAR_PRICE * 100).toFixed(0);
@@ -127,8 +115,8 @@ export default function SituationTab() {
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ color: C.textMuted, fontSize: 10, textTransform: 'uppercase' }}>Source</div>
-            <div style={{ color: C.textDim, fontSize: 12 }}>{priceInfo?.source || 'loading...'}</div>
-            {priceInfo?.source === 'fallback' && (
+            <div style={{ color: C.textDim, fontSize: 12 }}>{priceInfo?.source || 'slider'}</div>
+            {(!priceInfo || priceInfo?.source === 'fallback') && (
               <div style={{ color: C.textMuted, fontSize: 10, marginTop: 2 }}>
                 Add VITE_EIA_API_KEY for live data
               </div>
@@ -173,7 +161,7 @@ export default function SituationTab() {
       {/* Key numbers */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 16 }}>
         {[
-          { l: 'Brent today', v: `$${price.toFixed(0)}`, s: priceInfo?.source !== 'fallback' ? `live · ${priceInfo?.source}` : 'estimate', color: t.color },
+          { l: 'Brent today', v: `$${price}`, s: priceInfo?.source !== 'fallback' ? `live · ${priceInfo?.source}` : 'from slider', color: t.color },
           { l: 'Change', v: `+$${changeDollar}`, s: `+${changePct}% from $${PRE_WAR_PRICE}`, color: C.red },
           { l: 'War day', v: `${warDays}`, s: 'since Feb 28', color: C.accent },
           { l: 'Hormuz', v: hormuz.v, s: hormuz.s, color: hormuz.color },

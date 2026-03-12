@@ -21,7 +21,7 @@ const TAB_LABELS = {
 
 export default function App() {
   const [tab, setTab] = useState('simulator');
-  const [params, setParams] = useState(PRESETS.extended);
+  const [params, setParams] = useState({ ...PRESETS.extended, oilPrice: 100 });
   const [priceInfo, setPriceInfo] = useState(null);
 
   // Fetch live oil price on mount
@@ -78,11 +78,11 @@ export default function App() {
         </div>
 
         {/* Tab content */}
-        {tab === 'simulator' && <SimulatorTab params={params} setParams={setParams} />}
+        {tab === 'simulator' && <SimulatorTab params={params} setParams={setParams} priceInfo={priceInfo} />}
         {tab === 'household' && <HouseholdTab params={params} />}
         {tab === 'backtest' && <BacktestTab />}
         {tab === 'comparison' && <ComparisonTab />}
-        {tab === 'situation' && <SituationTab />}
+        {tab === 'situation' && <SituationTab params={params} priceInfo={priceInfo} />}
         {tab === 'method' && <MethodTab />}
 
         {/* Footer */}
