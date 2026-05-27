@@ -78,11 +78,15 @@ const THRESHOLDS = [
   },
 ];
 
+const fmtTrend = (t) => (t > 0 ? `+${t.toFixed(2)}/d` : t < 0 ? `${t.toFixed(2)}/d` : 'flat');
+
 const STATIC_DATA = {
   ieaRelease: `${snapshot.ieaReserveDeployed}/${snapshot.ieaReserveTotal}M bbl`,
   ieaNote: `~${Math.round((snapshot.ieaReserveDeployed / snapshot.ieaReserveTotal) * 100)}% deployed`,
-  euGasStorage: `~${snapshot.euGasStorage}%`,
-  euGasNote: `vs ${snapshot.euGasStorageNorm}% seasonal`,
+  euGasStorage: `${snapshot.euGasStorage}%`,
+  euGasNote: `${fmtTrend(snapshot.euGasStorageTrend)} · vs ${snapshot.euGasStorageNorm}% seasonal`,
+  deGasStorage: `${snapshot.deGasStorage}%`,
+  deGasNote: `Germany · ${fmtTrend(snapshot.deGasStorageTrend)}`,
 };
 
 function getThreshold(price) {
@@ -166,21 +170,36 @@ export default function SituationTab({ params, priceInfo }) {
       </div>
 
       {/* Key numbers */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 8 }}>
         {[
           { l: 'Brent today', v: `$${price}`, s: priceInfo?.source !== 'fallback' ? `live · ${priceInfo?.source}` : 'from slider', color: t.color },
           { l: 'Change', v: `+$${changeDollar}`, s: `+${changePct}% from $${PRE_WAR_OIL}`, color: C.red },
           { l: 'War day', v: `${warDays}`, s: 'since Feb 28', color: C.accent },
           { l: 'Hormuz', v: hormuz.v, s: hormuz.s, color: hormuz.color },
-          { l: 'IEA release', v: STATIC_DATA.ieaRelease, s: STATIC_DATA.ieaNote, color: C.blue },
-          { l: 'EU gas storage', v: STATIC_DATA.euGasStorage, s: STATIC_DATA.euGasNote, color: C.green },
+          { l: 'IEA release', v: STATIC_DATA.ieaRelease, s: STATIC_DATA.ieaNote, color: C.blue, auto: true },
+          { l: 'EU gas storage', v: STATIC_DATA.euGasStorage, s: STATIC_DATA.euGasNote, color: C.green, auto: true },
+          { l: 'DE gas storage', v: STATIC_DATA.deGasStorage, s: STATIC_DATA.deGasNote, color: C.green, auto: true },
         ].map((d, i) => (
-          <div key={i} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: 12 }}>
-            <div style={{ color: C.textMuted, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{d.l}</div>
+          <div key={i} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: 12, position: 'relative' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 4 }}>
+              <div style={{ color: C.textMuted, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{d.l}</div>
+              {d.auto && (
+                <span title="Auto-fetched from AGSI+ (Gas Infrastructure Europe) on every deploy" style={{
+                  color: C.green, fontSize: 9, fontWeight: 600, opacity: 0.7,
+                  background: C.green + '11', border: `1px solid ${C.green}22`, borderRadius: 3,
+                  padding: '0 4px', cursor: 'help',
+                }}>● LIVE</span>
+              )}
+            </div>
             <div style={{ color: d.color, fontSize: 18, fontWeight: 700, marginTop: 4 }}>{d.v}</div>
             <div style={{ color: C.textDim, fontSize: 11, marginTop: 2 }}>{d.s}</div>
           </div>
         ))}
+      </div>
+      <div style={{ color: C.textMuted, fontSize: 10, marginBottom: 16, fontStyle: 'italic' }}>
+        <span style={{ color: C.green }}>● LIVE</span> cards auto-refresh from{' '}
+        <a href="https://agsi.gie.eu/" target="_blank" rel="noreferrer" style={{ color: C.textDim, textDecoration: 'underline' }}>AGSI+</a>{' '}
+        (Gas Infrastructure Europe) on every deploy. Other figures updated manually — see footer for snapshot date.
       </div>
 
       {/* Probability update */}

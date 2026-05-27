@@ -3,7 +3,10 @@
   "asOfNote": "Auto-fetched fields are refreshed at build time when an AGSI_API_KEY secret is set; everything else is updated manually.",
   "euGasStorage": 39,
   "euGasStorageNorm": 55,
+  "euGasStorageTrend": 0.29,
   "euGasStorageSource": "agsi (2026-05-25)",
+  "deGasStorage": 30,
+  "deGasStorageTrend": 0.43,
   "ieaReserveDeployed": 164,
   "ieaReserveTotal": 400,
   "scenarioProbsByPrice": {

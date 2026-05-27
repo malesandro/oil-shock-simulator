@@ -67,8 +67,8 @@ export default function App() {
                 Live Brent: ${priceInfo.price}/bbl ({priceInfo.source})
               </span>
             )}
-            <span style={{ color: snap.color, fontSize: 11 }}>
-              Snapshot data: {snap.niceDate}{snap.ageDays > 30 ? ` · ${snap.ageDays}d old` : ''}
+            <span style={{ color: snap.color, fontSize: 11 }} title="Manual fields (scenarios, IEA reserves, narratives) updated on this date. Brent and EU/DE gas storage auto-refresh on every deploy.">
+              Manual snapshot: {snap.niceDate}{snap.ageDays > 30 ? ` · ${snap.ageDays}d old` : ''}
             </span>
           </div>
         </div>

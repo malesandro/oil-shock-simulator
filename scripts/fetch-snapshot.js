@@ -2,8 +2,10 @@
 /**
  * Refresh auto-fetchable fields in src/data/snapshot.json before a build.
  *
- * Currently auto-fetches:
- *   - euGasStorage (% full, EU aggregate) from AGSI+ (Gas Infrastructure Europe)
+ * Currently auto-fetches from AGSI+ (Gas Infrastructure Europe):
+ *   - euGasStorage / euGasStorageTrend (% full, EU aggregate + daily delta)
+ *   - deGasStorage / deGasStorageTrend (Germany, the largest single market;
+ *     diverges meaningfully from the EU aggregate — important context)
  *
  * Behavior:
  *   - If AGSI_API_KEY is not set in env, exits 0 without modifying anything.
@@ -28,20 +30,25 @@ import { dirname, join } from 'node:path';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SNAPSHOT_PATH = join(HERE, '..', 'src', 'data', 'snapshot.json');
 
-async function fetchAgsiEuStorage(apiKey) {
-  // AGSI+ aggregate EU endpoint. The `full` field is the % of working gas
-  // capacity currently in storage across all EU member states.
-  const url = 'https://agsi.gie.eu/api?country=eu&type=eu&size=1';
+async function fetchAgsiStorage(apiKey, query, label) {
+  // The `full` field is the % of working gas capacity currently in storage.
+  // The `trend` field is the day-on-day delta in percentage points.
+  const url = `https://agsi.gie.eu/api?${query}&size=1`;
   const res = await fetch(url, { headers: { 'x-key': apiKey } });
-  if (!res.ok) throw new Error(`AGSI+ HTTP ${res.status}`);
+  if (!res.ok) throw new Error(`AGSI+ ${label} HTTP ${res.status}`);
   const json = await res.json();
   const row = json?.data?.[0];
-  if (!row) throw new Error('AGSI+ returned no rows');
+  if (!row) throw new Error(`AGSI+ ${label} returned no rows`);
   const full = parseFloat(row.full);
+  const trend = parseFloat(row.trend);
   if (!Number.isFinite(full) || full < 0 || full > 100) {
-    throw new Error(`AGSI+ "full" out of range: ${row.full}`);
+    throw new Error(`AGSI+ ${label} "full" out of range: ${row.full}`);
   }
-  return { value: Math.round(full), asOf: row.gasDayStart || row.gasDayStartedOn };
+  return {
+    value: Math.round(full),
+    trend: Number.isFinite(trend) ? Math.round(trend * 100) / 100 : 0,
+    asOf: row.gasDayStart || row.gasDayStartedOn,
+  };
 }
 
 async function main() {
@@ -55,19 +62,31 @@ async function main() {
   const snapshot = JSON.parse(raw);
   let changed = false;
 
-  try {
-    const { value, asOf } = await fetchAgsiEuStorage(key);
-    if (snapshot.euGasStorage !== value) {
-      console.log(`[fetch-snapshot] euGasStorage ${snapshot.euGasStorage}% -> ${value}% (AGSI+ gasDay ${asOf})`);
-      snapshot.euGasStorage = value;
-      snapshot.euGasStorageSource = `agsi (${asOf})`;
-      snapshot.asOf = new Date().toISOString().slice(0, 10);
-      changed = true;
-    } else {
-      console.log(`[fetch-snapshot] euGasStorage unchanged at ${value}% (AGSI+ gasDay ${asOf})`);
+  const targets = [
+    { query: 'country=eu&type=eu', label: 'EU',      valueKey: 'euGasStorage', trendKey: 'euGasStorageTrend' },
+    { query: 'country=de',         label: 'Germany', valueKey: 'deGasStorage', trendKey: 'deGasStorageTrend' },
+  ];
+
+  for (const t of targets) {
+    try {
+      const { value, trend, asOf } = await fetchAgsiStorage(key, t.query, t.label);
+      const prevValue = snapshot[t.valueKey];
+      const prevTrend = snapshot[t.trendKey];
+      if (prevValue !== value || prevTrend !== trend) {
+        console.log(`[fetch-snapshot] ${t.label}: ${prevValue}% (${prevTrend >= 0 ? '+' : ''}${prevTrend}) -> ${value}% (${trend >= 0 ? '+' : ''}${trend}) (AGSI+ gasDay ${asOf})`);
+        snapshot[t.valueKey] = value;
+        snapshot[t.trendKey] = trend;
+        if (t.label === 'EU') {
+          snapshot.euGasStorageSource = `agsi (${asOf})`;
+        }
+        snapshot.asOf = new Date().toISOString().slice(0, 10);
+        changed = true;
+      } else {
+        console.log(`[fetch-snapshot] ${t.label} unchanged at ${value}% (${trend >= 0 ? '+' : ''}${trend}) (AGSI+ gasDay ${asOf})`);
+      }
+    } catch (err) {
+      console.warn(`[fetch-snapshot] AGSI+ ${t.label} fetch failed: ${err.message} — keeping existing value.`);
     }
-  } catch (err) {
-    console.warn(`[fetch-snapshot] AGSI+ fetch failed: ${err.message} — keeping existing value.`);
   }
 
   if (changed) {
