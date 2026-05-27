@@ -1,37 +1,66 @@
 {
   "asOf": "2026-05-27",
   "asOfNote": "Auto-fetched fields are refreshed at build time when an AGSI_API_KEY secret is set; everything else is updated manually.",
-
-  "euGasStorage": 37,
+  "euGasStorage": 39,
   "euGasStorageNorm": 55,
-  "euGasStorageSource": "manual",
-
+  "euGasStorageSource": "agsi (2026-05-25)",
   "ieaReserveDeployed": 164,
   "ieaReserveTotal": 400,
-
   "scenarioProbsByPrice": {
     "comment": "Probabilities depend on the current Brent price. Each scenario maps price bands (tested in order) to a probability range.",
     "swift": [
-      {"below": 85, "p": "25-30%"},
-      {"below": 100, "p": "15-20%"},
-      {"below": 120, "p": "10-15%"},
-      {"below": null, "p": "5-10%"}
+      {
+        "below": 85,
+        "p": "25-30%"
+      },
+      {
+        "below": 100,
+        "p": "15-20%"
+      },
+      {
+        "below": 120,
+        "p": "10-15%"
+      },
+      {
+        "below": null,
+        "p": "5-10%"
+      }
     ],
     "extended": [
-      {"below": null, "p": "40-45%"}
+      {
+        "below": null,
+        "p": "40-45%"
+      }
     ],
     "prolonged": [
-      {"below": 100, "p": "20-25%"},
-      {"below": 120, "p": "25-30%"},
-      {"below": null, "p": "30-35%"}
+      {
+        "below": 100,
+        "p": "20-25%"
+      },
+      {
+        "below": 120,
+        "p": "25-30%"
+      },
+      {
+        "below": null,
+        "p": "30-35%"
+      }
     ],
     "catastrophic": [
-      {"below": 120, "p": "8-12%"},
-      {"below": 140, "p": "12-15%"},
-      {"below": null, "p": "15-20%"}
+      {
+        "below": 120,
+        "p": "8-12%"
+      },
+      {
+        "below": 140,
+        "p": "12-15%"
+      },
+      {
+        "below": null,
+        "p": "15-20%"
+      }
     ]
   },
-
   "methodScenarios": [
     {
       "name": "Swift (<1mo from now)",
