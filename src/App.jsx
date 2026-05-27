@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { C } from './theme';
 import { PRESETS } from './engine/simulation';
 import { fetchOilPrice } from './data/oilPrice';
+import snapshot from './data/snapshot.json' with { type: 'json' };
 import SimulatorTab from './tabs/SimulatorTab';
 import HouseholdTab from './tabs/HouseholdTab';
 import BacktestTab from './tabs/BacktestTab';
@@ -19,10 +20,20 @@ const TAB_LABELS = {
   method: 'Methodology',
 };
 
+function snapshotAge() {
+  const ageDays = Math.floor((Date.now() - new Date(snapshot.asOf).getTime()) / 86400000);
+  const niceDate = new Date(snapshot.asOf).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  let color = C.textMuted;
+  if (ageDays > 60) color = C.red;
+  else if (ageDays > 30) color = '#f59e0b';
+  return { ageDays, niceDate, color };
+}
+
 export default function App() {
   const [tab, setTab] = useState('simulator');
   const [params, setParams] = useState({ ...PRESETS.current, oilPrice: 115 });
   const [priceInfo, setPriceInfo] = useState(null);
+  const snap = snapshotAge();
 
   // Fetch live oil price on mount
   useEffect(() => {
@@ -50,11 +61,16 @@ export default function App() {
           <div style={{ color: C.textDim, fontSize: 13 }}>
             Monte Carlo simulation modeling the 2026 Iran war impact on energy, food, flights & household costs
           </div>
-          {priceInfo && priceInfo.source !== 'fallback' && (
-            <div style={{ color: C.green, fontSize: 11, marginTop: 4 }}>
-              Live Brent: ${priceInfo.price}/bbl ({priceInfo.source})
-            </div>
-          )}
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 4, flexWrap: 'wrap' }}>
+            {priceInfo && priceInfo.source !== 'fallback' && (
+              <span style={{ color: C.green, fontSize: 11 }}>
+                Live Brent: ${priceInfo.price}/bbl ({priceInfo.source})
+              </span>
+            )}
+            <span style={{ color: snap.color, fontSize: 11 }}>
+              Snapshot data: {snap.niceDate}{snap.ageDays > 30 ? ` · ${snap.ageDays}d old` : ''}
+            </span>
+          </div>
         </div>
 
         {/* Tabs */}

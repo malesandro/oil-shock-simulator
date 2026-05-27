@@ -1,5 +1,14 @@
 import { C } from '../theme';
 import { PRE_WAR_OIL, WAR_START } from '../constants';
+import snapshot from '../data/snapshot.json' with { type: 'json' };
+
+function probForPrice(scenario, price) {
+  const bands = snapshot.scenarioProbsByPrice[scenario];
+  for (const band of bands) {
+    if (band.below == null || price < band.below) return band.p;
+  }
+  return bands[bands.length - 1].p;
+}
 
 const THRESHOLDS = [
   {
@@ -18,7 +27,7 @@ const THRESHOLDS = [
   {
     min: 120, label: 'SEVERE', color: '#ef4444',
     headline: 'Severe supply disruption — reserve releases failing to contain prices',
-    analysis: 'Brent above $120 means the market has concluded that strategic reserve releases and diplomatic efforts are insufficient. The Hormuz disruption is being priced as a sustained shock. With ~164M of the 400M-barrel IEA release already deployed (~41%), the remaining buffer is shrinking against an ~14 mb/d shut-in. Iran\'s mining of Hormuz and attacks on Gulf infrastructure are driving a structural risk premium that reserve releases cannot offset.',
+    analysis: `Brent above $120 means the market has concluded that strategic reserve releases and diplomatic efforts are insufficient. The Hormuz disruption is being priced as a sustained shock. With ~${snapshot.ieaReserveDeployed}M of the ${snapshot.ieaReserveTotal}M-barrel IEA release already deployed (~${Math.round((snapshot.ieaReserveDeployed / snapshot.ieaReserveTotal) * 100)}%), the remaining buffer is shrinking against an ~14 mb/d shut-in. Iran's mining of Hormuz and attacks on Gulf infrastructure are driving a structural risk premium that reserve releases cannot offset.`,
     implications: [
       'Fuel surcharges already hitting consumers — expect €0.30-0.50/L increase at the pump',
       'Food prices beginning to rise as transport costs feed through (4-8 week lag)',
@@ -31,7 +40,7 @@ const THRESHOLDS = [
   {
     min: 100, label: 'ELEVATED', color: '#f59e0b',
     headline: 'Hormuz disruption sustaining triple-digit oil',
-    analysis: 'Brent above $100 reflects a sustained geopolitical risk premium in month 3 of the war. The Strait of Hormuz is disrupted — under US naval blockade of Iranian ports since mid-April, with partial tanker transit ongoing under escort. Iran was caught laying sea mines this week, breaking the fragile ceasefire. The IEA reports ~14 mb/d shut in, the largest supply shock on record. Strategic reserves (164/400M barrels deployed) provide a floor but the physical disruption keeps prices elevated.',
+    analysis: `Brent above $100 reflects a sustained geopolitical risk premium in month 3 of the war. The Strait of Hormuz is disrupted — under US naval blockade of Iranian ports since mid-April, with partial tanker transit ongoing under escort. Iran was caught laying sea mines this week, breaking the fragile ceasefire. The IEA reports ~14 mb/d shut in, the largest supply shock on record. Strategic reserves (${snapshot.ieaReserveDeployed}/${snapshot.ieaReserveTotal}M barrels deployed) provide a floor but the physical disruption keeps prices elevated.`,
     implications: [
       'Fuel prices rising but manageable — most consumers absorb a 10-20% increase',
       'Airlines adding fuel surcharges; long-haul routes most affected',
@@ -70,10 +79,10 @@ const THRESHOLDS = [
 ];
 
 const STATIC_DATA = {
-  ieaRelease: '164/400M bbl',
-  ieaNote: '~41% deployed',
-  euGasStorage: '~37%',
-  euGasNote: 'vs 55% seasonal',
+  ieaRelease: `${snapshot.ieaReserveDeployed}/${snapshot.ieaReserveTotal}M bbl`,
+  ieaNote: `~${Math.round((snapshot.ieaReserveDeployed / snapshot.ieaReserveTotal) * 100)}% deployed`,
+  euGasStorage: `~${snapshot.euGasStorage}%`,
+  euGasNote: `vs ${snapshot.euGasStorageNorm}% seasonal`,
 };
 
 function getThreshold(price) {
@@ -180,10 +189,10 @@ export default function SituationTab({ params, priceInfo }) {
           Scenario probabilities (based on current price level)
         </div>
         {[
-          { n: 'Swift Resolution', p: price < 85 ? '25-30%' : price < 100 ? '15-20%' : price < 120 ? '10-15%' : '5-10%', c: C.green },
-          { n: 'Extended Disruption', p: '40-45%', c: C.accent },
-          { n: 'Prolonged War', p: price > 120 ? '30-35%' : price > 100 ? '25-30%' : '20-25%', c: '#f97316' },
-          { n: 'Catastrophic', p: price > 140 ? '15-20%' : price > 120 ? '12-15%' : '8-12%', c: C.red },
+          { n: 'Swift Resolution', p: probForPrice('swift', price), c: C.green },
+          { n: 'Extended Disruption', p: probForPrice('extended', price), c: C.accent },
+          { n: 'Prolonged War', p: probForPrice('prolonged', price), c: '#f97316' },
+          { n: 'Catastrophic', p: probForPrice('catastrophic', price), c: C.red },
         ].map((s, i) => (
           <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: i < 3 ? `1px solid ${C.border}22` : 'none' }}>
             <span style={{ color: s.c, fontSize: 13, fontWeight: 600 }}>{s.n}</span>

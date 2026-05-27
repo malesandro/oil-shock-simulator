@@ -2,6 +2,11 @@ name: Deploy
 on:
   push:
     branches: [main]
+  # Weekly rebuild so AGSI+ (gas storage) auto-fetched data stays current
+  # even when no code is pushed. Mondays 06:00 UTC.
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -16,6 +21,7 @@ jobs:
       - run: npm install && npm run build
         env:
           VITE_EIA_API_KEY: ${{ secrets.VITE_EIA_API_KEY }}
+          AGSI_API_KEY: ${{ secrets.AGSI_API_KEY }}
 
       - name: Deploy to server
         uses: appleboy/scp-action@v0.1.7

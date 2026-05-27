@@ -1,0 +1,60 @@
+name: Stale snapshot reminder
+
+# Opens an issue when src/data/snapshot.json hasn't been touched in >30 days.
+# Manual fields (scenario probabilities, IEA reserve progress, narrative
+# updates) only refresh when a human reviews and edits the file.
+
+on:
+  schedule:
+    # 1st of every month at 09:00 UTC
+    - cron: '0 9 1 * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute snapshot age
+        id: age
+        run: |
+          AS_OF=$(jq -r '.asOf' src/data/snapshot.json)
+          AGE_DAYS=$(( ( $(date +%s) - $(date -d "$AS_OF" +%s) ) / 86400 ))
+          echo "as_of=$AS_OF" >> "$GITHUB_OUTPUT"
+          echo "age_days=$AGE_DAYS" >> "$GITHUB_OUTPUT"
+          echo "Snapshot asOf=$AS_OF, age=$AGE_DAYS days"
+
+      - name: Check for existing open reminder issue
+        id: existing
+        if: steps.age.outputs.age_days > 30
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NUMBER=$(gh issue list --state open --label "stale-snapshot" --json number --jq '.[0].number // empty')
+          echo "number=$NUMBER" >> "$GITHUB_OUTPUT"
+
+      - name: Open reminder issue
+        if: steps.age.outputs.age_days > 30 && steps.existing.outputs.number == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AS_OF: ${{ steps.age.outputs.as_of }}
+          AGE_DAYS: ${{ steps.age.outputs.age_days }}
+        run: |
+          gh label create stale-snapshot --color FBCA04 --description "Snapshot data needs human review" 2>/dev/null || true
+          {
+            printf '`src/data/snapshot.json` was last reviewed on **%s** (%s days ago).\n\n' "$AS_OF" "$AGE_DAYS"
+            printf 'The following fields drift without manual review:\n'
+            printf '- `ieaReserveDeployed` — latest IEA OMR figure\n'
+            printf '- `scenarioProbsByPrice` — judgment based on current geopolitical state\n'
+            printf '- `methodScenarios` — rationale text for each scenario\n\n'
+            printf '(`euGasStorage` auto-updates from AGSI+ on every deploy if `AGSI_API_KEY` is set, so it may already be current — check it.)\n\n'
+            printf 'To resolve: edit the JSON file, update `asOf` to today, commit, and close this issue.\n\n'
+            printf -- '---\n'
+            printf '*Opened automatically by [.github/workflows/stale-snapshot.yml](.github/workflows/stale-snapshot.yml).*\n'
+          } > /tmp/body.md
+          gh issue create --title "Snapshot data is $AGE_DAYS days old" --label stale-snapshot --body-file /tmp/body.md

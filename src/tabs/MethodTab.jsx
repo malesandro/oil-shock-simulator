@@ -1,4 +1,8 @@
 import { C } from '../theme';
+import snapshot from '../data/snapshot.json' with { type: 'json' };
+
+const COLOR_MAP = { green: C.green, accent: C.accent, orange: '#f97316', red: C.red };
+const niceDate = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
 export default function MethodTab() {
   return (
@@ -33,13 +37,8 @@ export default function MethodTab() {
       </div>
 
       <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: 20 }}>
-        <h3 style={{ color: C.accent, fontSize: 16, fontWeight: 700, marginBottom: 12 }}>Scenario Probabilities (updated May 27)</h3>
-        {[
-          { n: 'Swift (<1mo from now)', p: '10-15%', c: C.green, w: 'Qatar-mediated talks ongoing but ceasefire violated this week. IEA assumes Hormuz reopens gradually from June. ~164M of 400M IEA barrels already deployed.' },
-          { n: 'Extended (3-6mo more)', p: '40-45%', c: C.accent, w: 'Base case. War in month 3; another 3-6 months likely before sustained ceasefire. World Bank baseline of $86/bbl avg 2026 implicit in this scenario.' },
-          { n: 'Prolonged (6-12mo more)', p: '25-30%', c: '#f97316', w: 'Iran caught mining Hormuz this week is a bad signal. Russia exploiting leverage but hasn\'t cut gas yet. Through 2026 into early 2027.' },
-          { n: 'Catastrophic (12+mo more)', p: '10-15%', c: C.red, w: 'Slightly lower than at war start. 3 months in without full regional escalation. Trump under domestic pressure from $4+ gas. World Bank upside scenario ($115 avg) ≈ the lower bound of this case.' },
-        ].map((s, i) => (
+        <h3 style={{ color: C.accent, fontSize: 16, fontWeight: 700, marginBottom: 12 }}>Scenario Probabilities (updated {niceDate(snapshot.asOf)})</h3>
+        {snapshot.methodScenarios.map((sc) => ({ n: sc.name, p: sc.p, c: COLOR_MAP[sc.color] || C.accent, w: sc.rationale })).map((s, i) => (
           <div key={i} style={{ marginBottom: 14, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
             <div style={{ background: s.c + '22', color: s.c, padding: '2px 8px', borderRadius: 4, fontSize: 12, fontWeight: 700, minWidth: 60, textAlign: 'center', marginTop: 2 }}>{s.p}</div>
             <div>
