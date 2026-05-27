@@ -1,4 +1,5 @@
 import { C } from '../theme';
+import { PRE_WAR_OIL, WAR_START } from '../constants';
 
 const THRESHOLDS = [
   {
@@ -75,9 +76,6 @@ const STATIC_DATA = {
   euGasNote: 'vs 55% seasonal',
 };
 
-const WAR_START = new Date('2026-02-28');
-const PRE_WAR_PRICE = 65;
-
 function getThreshold(price) {
   return THRESHOLDS.find((t) => price >= t.min) || THRESHOLDS[THRESHOLDS.length - 1];
 }
@@ -91,8 +89,8 @@ function getHormuzStatus(price) {
 export default function SituationTab({ params, priceInfo }) {
   const price = params.oilPrice;
   const t = getThreshold(price);
-  const changeDollar = (price - PRE_WAR_PRICE).toFixed(0);
-  const changePct = ((price - PRE_WAR_PRICE) / PRE_WAR_PRICE * 100).toFixed(0);
+  const changeDollar = (price - PRE_WAR_OIL).toFixed(0);
+  const changePct = ((price - PRE_WAR_OIL) / PRE_WAR_OIL * 100).toFixed(0);
   const warDays = Math.floor((Date.now() - WAR_START.getTime()) / 86400000);
   const hormuz = getHormuzStatus(price);
 
@@ -110,7 +108,7 @@ export default function SituationTab({ params, priceInfo }) {
               <span style={{ fontSize: 16, color: C.textDim, fontWeight: 400, marginLeft: 8 }}>/bbl</span>
             </div>
             <div style={{ color: t.color, fontSize: 13, marginTop: 4 }}>
-              +{changePct}% from pre-war (~${PRE_WAR_PRICE})
+              +{changePct}% from pre-war (~${PRE_WAR_OIL})
             </div>
           </div>
           <div style={{ textAlign: 'right' }}>
@@ -162,7 +160,7 @@ export default function SituationTab({ params, priceInfo }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 16 }}>
         {[
           { l: 'Brent today', v: `$${price}`, s: priceInfo?.source !== 'fallback' ? `live · ${priceInfo?.source}` : 'from slider', color: t.color },
-          { l: 'Change', v: `+$${changeDollar}`, s: `+${changePct}% from $${PRE_WAR_PRICE}`, color: C.red },
+          { l: 'Change', v: `+$${changeDollar}`, s: `+${changePct}% from $${PRE_WAR_OIL}`, color: C.red },
           { l: 'War day', v: `${warDays}`, s: 'since Feb 28', color: C.accent },
           { l: 'Hormuz', v: hormuz.v, s: hormuz.s, color: hormuz.color },
           { l: 'IEA release', v: STATIC_DATA.ieaRelease, s: STATIC_DATA.ieaNote, color: C.blue },

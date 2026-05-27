@@ -1,16 +1,18 @@
 /**
  * Oil Shock Monte Carlo Simulation Engine
- * 
+ *
  * 800-run simulation modeling 18-month price trajectories for:
  * - Brent crude oil ($/bbl)
  * - EU natural gas / TTF (€/MWh)
  * - Flight prices (% increase)
  * - Food prices (% increase)
  * - Services / CPI (% increase)
- * 
+ *
  * Calibrated against: Rystad Energy, Goldman Sachs, Capital Economics,
  * Deutsche Bank, 2022 Ukraine shock transmission data, 1973/1979 pass-through rates.
  */
+
+import { PRE_WAR_OIL, PRE_WAR_GAS } from '../constants.js';
 
 // Seeded PRNG for reproducible results
 function mulberry32(a) {
@@ -114,7 +116,7 @@ export function runSimulation(params, N = 800) {
     const mF = [];
     const hr = 0.55;
     for (let m = 1; m <= 18; m++) {
-      const oc = (mOil[m - 1] - 65) / 65;
+      const oc = (mOil[m - 1] - PRE_WAR_OIL) / PRE_WAR_OIL;
       const hd = Math.max(0, hr * Math.exp(-m * 0.15));
       const er = 1 - hd;
       const pi = oc * 0.30 * er + oc * 0.30 * hd * 0.15;
@@ -127,8 +129,8 @@ export function runSimulation(params, N = 800) {
     // Multi-stage: transport (fast) + fertilizer (3-6mo lag) + processing (2-3mo lag)
     const mFd = [];
     for (let m = 1; m <= 18; m++) {
-      const oc = (mOil[m - 1] - 65) / 65;
-      const gc = (mGas[m - 1] - 35) / 35;
+      const oc = (mOil[m - 1] - PRE_WAR_OIL) / PRE_WAR_OIL;
+      const gc = (mGas[m - 1] - PRE_WAR_GAS) / PRE_WAR_GAS;
       const tr = oc * 0.08 * Math.min(m / 1.5, 1);
       const fl = Math.min(1, Math.max(0, (m - 2) / 4));
       const fe = gc * 0.12 * fl;
@@ -144,8 +146,8 @@ export function runSimulation(params, N = 800) {
     const mS = [];
     let we = 0;
     for (let m = 1; m <= 18; m++) {
-      const oc = (mOil[m - 1] - 65) / 65;
-      const gc = (mGas[m - 1] - 35) / 35;
+      const oc = (mOil[m - 1] - PRE_WAR_OIL) / PRE_WAR_OIL;
+      const gc = (mGas[m - 1] - PRE_WAR_GAS) / PRE_WAR_GAS;
       const de = (oc * 0.03 + gc * 0.02) * Math.min(m / 3, 1);
       const lo = oc * 0.03 * Math.min(m / 2, 1);
       const hi = (mFd[m - 1] / 100) * 0.35 + de;

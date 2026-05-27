@@ -66,13 +66,13 @@ export default function BacktestTab() {
         <div style={{ color: C.accent, fontSize: 14, fontWeight: 700, marginBottom: 8 }}>Backtest Verdict</div>
         <div style={{ color: C.text, fontSize: 13, lineHeight: 1.8 }}>
           <p style={{ marginBottom: 10 }}>
-            The structural dynamics — fast oil spike, lagged food, gas staying elevated — match the 2022 pattern. The <strong>shape</strong> is right.
+            <strong style={{ color: C.green }}>Oil: shape is right.</strong> The model captures the fast spike (peak at month 3) and the gradual decline as Russia finds Asian buyers. Median tracks within ~$15 of actuals at most checkpoints; the 80% CI contains all five reference months.
           </p>
           <p style={{ marginBottom: 10 }}>
-            Where it diverges: likely overshoots early oil peaks and undershoots late food inflation. Can't model Russia finding Asian buyers (a supply-side response).
+            <strong style={{ color: C.red }}>Food: model overshoots by ~3-5×.</strong> Actual 2022 food inflation peaked around +10-11% y-o-y; the model produces +45-55%. The transport, fertilizer, and processing channels are calibrated for a Hormuz-scale disruption, not a Russia-EU one, and don't capture grain-substitution dynamics or the speed of price-fixing interventions seen in 2022.
           </p>
           <p>
-            <strong style={{ color: C.accent }}>Trust relative signals (what moves first, what lags, which parameters matter) more than absolute numbers.</strong>
+            <strong style={{ color: C.accent }}>Read the model as scenario-mongering, not prediction.</strong> Relative signals (what moves first, which parameters matter most, how shocks fatten the tails) are more trustworthy than the absolute food numbers.
           </p>
         </div>
       </div>

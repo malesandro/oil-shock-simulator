@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { C } from '../theme';
 import { runSimulation, computePercentiles } from '../engine/simulation';
+import { PRE_WAR_OIL, PRE_WAR_GAS } from '../constants';
 
 export default function HouseholdTab({ params }) {
   const r = useMemo(() => runSimulation(params, 400), [params]);
@@ -12,8 +13,8 @@ export default function HouseholdTab({ params }) {
   const flights = computePercentiles(r.flights, mo);
 
   const base = { fuel: 1800, heating: 1200, groceries: 3500, electricity: 800 };
-  const oilPct = (oil.median - 65) / 65;
-  const gasPct = (gas.median - 35) / 35;
+  const oilPct = (oil.median - PRE_WAR_OIL) / PRE_WAR_OIL;
+  const gasPct = (gas.median - PRE_WAR_GAS) / PRE_WAR_GAS;
   const fuelNow = Math.round(base.fuel * (1 + oilPct * 0.7));
   const heatNow = Math.round(base.heating * (1 + gasPct * 0.5));
   const grocNow = Math.round(base.groceries * (1 + food.median / 100));

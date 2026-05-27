@@ -22,6 +22,9 @@ export default function SimulatorTab({ params, setParams, priceInfo }) {
     <div>
       <div style={{ color: C.textDim, fontSize: 13, marginBottom: 16, lineHeight: 1.6 }}>
         800-run Monte Carlo with random infrastructure shocks. Dashed red line = conflict end. Dot = peak value.
+        <span style={{ color: C.textMuted, fontSize: 11, display: 'block', marginTop: 4 }}>
+          Months are counted from war start (Feb 28, 2026): month 1 = March, month 3 = May, month 12 = Feb 2027.
+        </span>
       </div>
 
       {/* Presets */}
@@ -43,7 +46,7 @@ export default function SimulatorTab({ params, setParams, priceInfo }) {
       {/* Controls */}
       <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: 16, marginBottom: 20 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
-          <Slider label="Oil Price (Brent)" value={params.oilPrice} onChange={(v) => set('oilPrice', v)} min={70} max={300} unit=" $/bbl" />
+          <Slider label="Oil Price (Brent)" value={params.oilPrice} onChange={(v) => set('oilPrice', v)} min={60} max={300} unit=" $/bbl" />
               {priceInfo && priceInfo.source !== 'fallback' && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: -4, marginBottom: 4 }}>
                   <span style={{ color: '#22c55e', fontSize: 10 }}>Live: ${priceInfo.price}/bbl from {priceInfo.source}</span>
