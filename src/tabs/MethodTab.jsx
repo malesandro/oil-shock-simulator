@@ -18,7 +18,7 @@ export default function MethodTab() {
       <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: 20, marginBottom: 20 }}>
         <h3 style={{ color: C.accent, fontSize: 16, fontWeight: 700, marginBottom: 12 }}>Calibration</h3>
         <div style={{ color: C.text, fontSize: 13, lineHeight: 1.8 }}>
-          <p style={{ marginBottom: 10 }}><strong style={{ color: C.accent }}>Anchors:</strong> Rystad ($135/4mo), Goldman (17× vs 2022), Capital Economics ($100+ year-end), Kpler ($150 if no March resolution).</p>
+          <p style={{ marginBottom: 10 }}><strong style={{ color: C.accent }}>Anchors:</strong> IEA May 2026 OMR (~14 mb/d shut in, Brent $110, Hormuz reopens from June), World Bank Apr 2026 (baseline $86/bbl 2026 avg, upside $115), IMF Apr 2026 WEO ($82 baseline, recession risk if Hormuz stays closed), OPEC MOMR. Bank anchors: Rystad ($135/4mo), Goldman (17× vs 2022), Capital Economics, Kpler.</p>
           <p style={{ marginBottom: 10 }}><strong style={{ color: C.accent }}>Historical:</strong> 1973 (food +30-50%/24mo, CPI 3→12%/18mo), 1979 (oil doubled/12mo), 1990 Gulf War (spike+crash), 2022 Ukraine (~18mo to peak CPI).</p>
           <p><strong style={{ color: C.accent }}>2022 backtest:</strong> Model captures structural dynamics. Trust relative signals over absolutes.</p>
         </div>
@@ -33,12 +33,12 @@ export default function MethodTab() {
       </div>
 
       <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: 20 }}>
-        <h3 style={{ color: C.accent, fontSize: 16, fontWeight: 700, marginBottom: 12 }}>Scenario Probabilities (updated March 12)</h3>
+        <h3 style={{ color: C.accent, fontSize: 16, fontWeight: 700, marginBottom: 12 }}>Scenario Probabilities (updated May 27)</h3>
         {[
-          { n: 'Swift (2-6wk)', p: '~15%', c: C.green, w: 'Dropping. Iran escalating despite Trump signals. IEA reserve release didn\'t hold prices. Oilfield restarts take months regardless.' },
-          { n: 'Extended (2-6mo)', p: '35-40%', c: C.accent, w: 'Base case. War intensity may decrease but Hormuz risk premium persists. 400M barrel release buys time but doesn\'t solve the physical disruption.' },
-          { n: 'Prolonged (6-12mo)', p: '~30%', c: '#f97316', w: 'Rising. Iran targeting infrastructure across Gulf. Russia exploiting leverage. No diplomatic off-ramp visible.' },
-          { n: 'Catastrophic (12+mo)', p: '15-20%', c: C.red, w: 'Tail fattening. Full regional war, Hormuz mined. But US energy-independent and $4+ gas is political poison for Trump.' },
+          { n: 'Swift (<1mo from now)', p: '10-15%', c: C.green, w: 'Qatar-mediated talks ongoing but ceasefire violated this week. IEA assumes Hormuz reopens gradually from June. ~164M of 400M IEA barrels already deployed.' },
+          { n: 'Extended (3-6mo more)', p: '40-45%', c: C.accent, w: 'Base case. War in month 3; another 3-6 months likely before sustained ceasefire. World Bank baseline of $86/bbl avg 2026 implicit in this scenario.' },
+          { n: 'Prolonged (6-12mo more)', p: '25-30%', c: '#f97316', w: 'Iran caught mining Hormuz this week is a bad signal. Russia exploiting leverage but hasn\'t cut gas yet. Through 2026 into early 2027.' },
+          { n: 'Catastrophic (12+mo more)', p: '10-15%', c: C.red, w: 'Slightly lower than at war start. 3 months in without full regional escalation. Trump under domestic pressure from $4+ gas. World Bank upside scenario ($115 avg) ≈ the lower bound of this case.' },
         ].map((s, i) => (
           <div key={i} style={{ marginBottom: 14, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
             <div style={{ background: s.c + '22', color: s.c, padding: '2px 8px', borderRadius: 4, fontSize: 12, fontWeight: 700, minWidth: 60, textAlign: 'center', marginTop: 2 }}>{s.p}</div>

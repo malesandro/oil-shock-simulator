@@ -7,13 +7,13 @@ const compData = [
     cat: 'Flights', icon: '✈️',
     s70: { oilShare: '30-40% of cost', hedging: 'None', speed: '6-12mo', result: '+40-60%/18mo' },
     s26: { oilShare: '25-35%', hedging: 'Majors 6-18mo; LCCs exposed', speed: 'Surcharges 2-4wk', result: 'Immediate surcharges' },
-    verdict: 'Airlines pass costs faster but are margin-thin. LCCs hit within days. Bernstein already cut European airline targets.',
+    verdict: 'Airlines pass costs faster but are margin-thin. LCCs hit within days. Analysts have cut European airline targets repeatedly since the war began.',
   },
   {
     cat: 'Food', icon: '🛒',
     s70: { oilShare: 'Moderate, local chains', hedging: 'None', speed: 'Slow, price controls', result: '+30-50%/2yr' },
     s26: { oilShare: 'High, globalized', hedging: 'Grain futures only', speed: 'Dynamic pricing', result: 'Visible 4-8wk' },
-    verdict: 'Food is MORE vulnerable now. Oil touches the chain 4-5×. 1/3 of fertilizer transits Hormuz. 400K tons of rice stuck at Indian ports.',
+    verdict: 'Food is MORE vulnerable now. Oil touches the chain 4-5×. 1/3 of fertilizer transits Hormuz. Major Asian ports have reported stranded grain cargoes since the disruption began.',
   },
   {
     cat: 'Services/CPI', icon: '🏢',

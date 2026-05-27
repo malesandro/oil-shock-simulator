@@ -21,7 +21,7 @@ const TAB_LABELS = {
 
 export default function App() {
   const [tab, setTab] = useState('simulator');
-  const [params, setParams] = useState({ ...PRESETS.extended, oilPrice: 100 });
+  const [params, setParams] = useState({ ...PRESETS.current, oilPrice: 115 });
   const [priceInfo, setPriceInfo] = useState(null);
 
   // Fetch live oil price on mount
@@ -42,7 +42,7 @@ export default function App() {
         {/* Header */}
         <div style={{ marginBottom: 24 }}>
           <div style={{ color: C.red, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 4 }}>
-            CRISIS ANALYSIS · MARCH 2026
+            CRISIS ANALYSIS · MAY 2026
           </div>
           <h1 style={{ color: C.text, fontSize: 24, fontWeight: 700, margin: '0 0 6px', lineHeight: 1.2 }}>
             Oil Shock Simulator
@@ -87,12 +87,13 @@ export default function App() {
 
         {/* Footer */}
         <div style={{ marginTop: 32, padding: '16px 0', borderTop: `1px solid ${C.border}`, color: C.textMuted, fontSize: 11, lineHeight: 1.6 }}>
-          <strong>Sources:</strong> Guardian, Fortune/Yergin, Reuters, CNN, Al Jazeera, CNBC, NBC News, Euronews,
-          Bruegel, Chatham House, Morningstar, EY, Goldman Sachs, Rystad Energy, Capital Economics, Deutsche Bank.
-          800-run Monte Carlo calibrated on analyst forecasts + historical pass-through data. Not financial advice.
+          <strong>Sources:</strong> IEA Oil Market Report, OPEC MOMR, IMF World Economic Outlook, World Bank Commodity Markets Outlook,
+          Goldman Sachs, Rystad Energy, Capital Economics, Deutsche Bank, Bruegel, Chatham House,
+          Reuters, Guardian, Fortune/Yergin, Al Jazeera, CNBC.
+          800-run Monte Carlo calibrated on institutional forecasts + historical pass-through data. Not financial advice.
           <br /><br />
           Built by <a href="https://github.com/malesandro" style={{ color: C.accent, textDecoration: 'none' }}>MAAD</a> · ·
-          Engine: Claude AI · March 2026
+          Engine: Claude AI · Updated May 2026
         </div>
       </div>
     </div>

@@ -17,7 +17,7 @@ const THRESHOLDS = [
   {
     min: 120, label: 'SEVERE', color: '#ef4444',
     headline: 'Severe supply disruption — reserve releases failing to contain prices',
-    analysis: 'Brent above $120 means the market has concluded that strategic reserve releases and diplomatic efforts are insufficient. The Hormuz closure is being priced as a sustained disruption, not a temporary spike. At this level, the 400M barrel IEA release (equivalent to ~4 days of global production) provides only brief relief before prices reassert. Iran\'s attacks on shipping and Gulf infrastructure are driving a structural risk premium.',
+    analysis: 'Brent above $120 means the market has concluded that strategic reserve releases and diplomatic efforts are insufficient. The Hormuz disruption is being priced as a sustained shock. With ~164M of the 400M-barrel IEA release already deployed (~41%), the remaining buffer is shrinking against an ~14 mb/d shut-in. Iran\'s mining of Hormuz and attacks on Gulf infrastructure are driving a structural risk premium that reserve releases cannot offset.',
     implications: [
       'Fuel surcharges already hitting consumers — expect €0.30-0.50/L increase at the pump',
       'Food prices beginning to rise as transport costs feed through (4-8 week lag)',
@@ -30,7 +30,7 @@ const THRESHOLDS = [
   {
     min: 100, label: 'ELEVATED', color: '#f59e0b',
     headline: 'Hormuz disruption sustaining triple-digit oil',
-    analysis: 'Brent above $100 reflects a significant geopolitical risk premium from the Iran conflict. The Strait of Hormuz remains effectively closed or severely disrupted, and market participants are pricing in weeks to months of elevated supply risk. Strategic reserve releases and diplomatic signals are providing a floor against further spikes, but the physical disruption to 20% of global oil transit is keeping prices elevated.',
+    analysis: 'Brent above $100 reflects a sustained geopolitical risk premium in month 3 of the war. The Strait of Hormuz is disrupted — under US naval blockade of Iranian ports since mid-April, with partial tanker transit ongoing under escort. Iran was caught laying sea mines this week, breaking the fragile ceasefire. The IEA reports ~14 mb/d shut in, the largest supply shock on record. Strategic reserves (164/400M barrels deployed) provide a floor but the physical disruption keeps prices elevated.',
     implications: [
       'Fuel prices rising but manageable — most consumers absorb a 10-20% increase',
       'Airlines adding fuel surcharges; long-haul routes most affected',
@@ -42,8 +42,8 @@ const THRESHOLDS = [
   },
   {
     min: 85, label: 'TENSION', color: '#3b82f6',
-    headline: 'Geopolitical risk premium holding',
-    analysis: 'Brent in the $85-100 range suggests markets believe the conflict will resolve within weeks to months. A risk premium is priced in, but the market is not yet pricing sustained Hormuz closure. Reserve releases and diplomatic efforts may be providing confidence. This level is elevated relative to pre-crisis (~$60-70) but within the range the global economy can absorb without severe disruption.',
+    headline: 'Markets pricing fragile ceasefire holding',
+    analysis: 'Brent in the $85-100 range suggests markets believe Qatar-mediated talks will produce a sustained ceasefire and gradual Hormuz reopening within months. A risk premium is priced in, but not full sustained closure. The IEA assumes Hormuz flows gradually resume from June; this price level is consistent with that base case. Elevated relative to pre-crisis (~$65) but within the range the global economy can absorb without severe disruption — provided the ceasefire actually holds.',
     implications: [
       'Consumer impact limited — pump prices up but not dramatically',
       'Airlines absorbing costs via hedging; minimal fare increases yet',
@@ -69,10 +69,10 @@ const THRESHOLDS = [
 ];
 
 const STATIC_DATA = {
-  ieaRelease: '400M bbl',
-  ieaNote: 'largest ever',
-  euGasStorage: '~27%',
-  euGasNote: 'vs 41% avg',
+  ieaRelease: '164/400M bbl',
+  ieaNote: '~41% deployed',
+  euGasStorage: '~37%',
+  euGasNote: 'vs 55% seasonal',
 };
 
 const WAR_START = new Date('2026-02-28');
@@ -118,7 +118,7 @@ export default function SituationTab({ params, priceInfo }) {
             <div style={{ color: C.textDim, fontSize: 12 }}>{priceInfo?.source || 'slider'}</div>
             {(!priceInfo || priceInfo?.source === 'fallback') && (
               <div style={{ color: C.textMuted, fontSize: 10, marginTop: 2 }}>
-                Add VITE_EIA_API_KEY for live data
+                Using indicative price — live feed unavailable
               </div>
             )}
           </div>
@@ -182,10 +182,10 @@ export default function SituationTab({ params, priceInfo }) {
           Scenario probabilities (based on current price level)
         </div>
         {[
-          { n: 'Swift Resolution', p: price < 85 ? '35-45%' : price < 100 ? '20-25%' : price < 120 ? '15-20%' : '10-15%', c: C.green },
-          { n: 'Extended Disruption', p: '35-40%', c: C.accent },
+          { n: 'Swift Resolution', p: price < 85 ? '25-30%' : price < 100 ? '15-20%' : price < 120 ? '10-15%' : '5-10%', c: C.green },
+          { n: 'Extended Disruption', p: '40-45%', c: C.accent },
           { n: 'Prolonged War', p: price > 120 ? '30-35%' : price > 100 ? '25-30%' : '20-25%', c: '#f97316' },
-          { n: 'Catastrophic', p: price > 140 ? '20-25%' : price > 120 ? '15-20%' : '10-15%', c: C.red },
+          { n: 'Catastrophic', p: price > 140 ? '15-20%' : price > 120 ? '12-15%' : '8-12%', c: C.red },
         ].map((s, i) => (
           <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: i < 3 ? `1px solid ${C.border}22` : 'none' }}>
             <span style={{ color: s.c, fontSize: 13, fontWeight: 600 }}>{s.n}</span>

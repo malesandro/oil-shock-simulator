@@ -8,7 +8,7 @@
  * For a production app, consider a paid feed or server-side caching.
  */
 
-const FALLBACK_PRICE = 100;
+const FALLBACK_PRICE = 115;
 const CACHE_KEY = 'oil_price_cache';
 const CACHE_TTL = 3600000;
 

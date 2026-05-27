@@ -60,7 +60,7 @@ export function runSimulation(params, N = 800) {
     const rng = mulberry32(run * 7919 + 31);
 
     // ── OIL MODEL ──
-    // Initial conditions reflect active crisis (Hormuz already closed, $60→$99 in 10 days)
+    // Initial conditions reflect active crisis (Hormuz disrupted, $65→$117 over 3 months with spike to ~$144)
     const mOil = [];
     let p = oilPrice;
     for (let m = 1; m <= 18; m++) {
@@ -94,7 +94,7 @@ export function runSimulation(params, N = 800) {
 
     // ── EU GAS MODEL (TTF €/MWh) ──
     const mGas = [];
-    let gp = clamp(60 * (50 / Math.max(euGasStorage, 10)), 40, 180);
+    let gp = clamp(35 * (50 / Math.max(euGasStorage, 10)), 30, 180);
     for (let m = 1; m <= 18; m++) {
       const war = m <= conflictMonths;
       const hOpen = hormuzReopenMonth > 0 && m >= hormuzReopenMonth;
@@ -232,10 +232,13 @@ export const ACTUAL_2022 = {
 /**
  * Scenario presets
  */
+// conflictMonths is TOTAL war duration from Feb 28 2026 t=0. We're now ~month 3.
+// hormuzReopenMonth=0 means stays closed for the full simulation; otherwise it's
+// the month from t=0 when transit resumes.
 export const PRESETS = {
-  current: { label: 'Current', conflictMonths: 3, hormuzReopenMonth: 0, euGasStorage: 27, reserveRelease: true, russiaGasCut: false, demandDestruction: 0.3, shockProb: 3 },
-  swift: { label: 'Swift', conflictMonths: 1, hormuzReopenMonth: 2, euGasStorage: 27, reserveRelease: true, russiaGasCut: false, demandDestruction: 0.2, shockProb: 1 },
-  extended: { label: 'Extended', conflictMonths: 6, hormuzReopenMonth: 5, euGasStorage: 27, reserveRelease: true, russiaGasCut: false, demandDestruction: 0.4, shockProb: 3 },
-  prolonged: { label: 'Prolonged', conflictMonths: 10, hormuzReopenMonth: 0, euGasStorage: 27, reserveRelease: true, russiaGasCut: true, demandDestruction: 0.5, shockProb: 5 },
-  catastrophic: { label: 'Catastrophic', conflictMonths: 18, hormuzReopenMonth: 0, euGasStorage: 27, reserveRelease: true, russiaGasCut: true, demandDestruction: 0.6, shockProb: 10 },
+  current: { label: 'Current', conflictMonths: 6, hormuzReopenMonth: 4, euGasStorage: 37, reserveRelease: true, russiaGasCut: false, demandDestruction: 0.5, shockProb: 5 },
+  swift: { label: 'Swift', conflictMonths: 4, hormuzReopenMonth: 4, euGasStorage: 37, reserveRelease: true, russiaGasCut: false, demandDestruction: 0.3, shockProb: 2 },
+  extended: { label: 'Extended', conflictMonths: 9, hormuzReopenMonth: 7, euGasStorage: 37, reserveRelease: true, russiaGasCut: false, demandDestruction: 0.5, shockProb: 4 },
+  prolonged: { label: 'Prolonged', conflictMonths: 14, hormuzReopenMonth: 0, euGasStorage: 37, reserveRelease: true, russiaGasCut: true, demandDestruction: 0.6, shockProb: 6 },
+  catastrophic: { label: 'Catastrophic', conflictMonths: 18, hormuzReopenMonth: 0, euGasStorage: 37, reserveRelease: true, russiaGasCut: true, demandDestruction: 0.7, shockProb: 12 },
 };

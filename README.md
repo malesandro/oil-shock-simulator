@@ -1,11 +1,10 @@
-```markdown
 # Oil Shock Simulator
 
 Interactive Monte Carlo simulation modeling the economic impact of the 2026 US-Israel/Iran war on oil prices, European gas, flight costs, food inflation, and Danish household budgets.
 
-Built in a single conversation between a human CTO and Claude AI on March 9-12, 2026, as the crisis was unfolding in real time.
+Originally built March 9-12, 2026 (week two of the war) in a conversation between a human CTO and Claude AI. Recalibrated May 2026 against IEA, OPEC, IMF, and World Bank data after three months of war.
 
-**Live:** [oil-shock-simulator.vercel.app](https://oil-shock-simulator.vercel.app)
+**Live:** [oilshock.alesandro.dk](https://oilshock.alesandro.dk)
 
 ## What it does
 
@@ -20,7 +19,7 @@ Built in a single conversation between a human CTO and Claude AI on March 9-12, 
 
 ## Calibration sources
 
-Rystad Energy, Goldman Sachs, Capital Economics, Deutsche Bank, Kpler, Bruegel, Chatham House, EY, Morningstar. Historical calibration against 1973, 1979, 1990, and 2022 energy shocks.
+IEA Oil Market Report, OPEC MOMR, IMF World Economic Outlook, World Bank Commodity Markets Outlook, Goldman Sachs, Rystad Energy, Capital Economics, Deutsche Bank, Bruegel, Chatham House. Historical calibration against 1973, 1979, 1990, and 2022 energy shocks.
 
 ## Quick start
 
@@ -35,24 +34,22 @@ Open http://localhost:5173
 
 ## Live oil price
 
-The app works without an API key (falls back to $100/bbl). For live Brent crude spot prices from the EIA:
+The app works without an API key (falls back to a recent hardcoded price). For live Brent crude spot prices from the EIA:
 
 1. Register for a free API key at [eia.gov/opendata/register.php](https://www.eia.gov/opendata/register.php) (no credit card, instant)
-2. Copy `.env.example` to `.env`
+2. Copy `.env.example` to `.env.local`
 3. Add your key: `VITE_EIA_API_KEY=your_key_here`
 
 Data is daily (previous day's spot price), public domain, no rate limits. Cached for 1 hour client-side.
 
-For Vercel deployment, add `VITE_EIA_API_KEY` in Settings → Environment Variables.
+### Deploying with the live price
 
-## Deploy to Vercel
+Vite inlines `VITE_*` env vars at **build time**, not runtime. So `VITE_EIA_API_KEY` must be set in the environment that runs `npm run build`:
 
-```bash
-npm i -g vercel
-vercel
-```
+- **Building locally then uploading `dist/`**: keep the key in `.env.local` (gitignored) and run `npm run build` from your machine.
+- **CI/host builds**: set `VITE_EIA_API_KEY` as a build-time environment variable on the host (Netlify, Vercel, GitHub Actions, etc.).
 
-Or connect your GitHub repo at [vercel.com/new](https://vercel.com/new) — it auto-detects Vite.
+Note: because Vite inlines the value into the static JS bundle, the key will be visible to anyone who inspects the built site. The EIA key is free and rate-limit-free, so this is acceptable; if you want to hide the key, proxy the request through a server endpoint instead.
 
 ## Project structure
 
@@ -78,15 +75,14 @@ src/
 
 ## Limitations
 
-Parameters derived from analyst reports, not regression on tick-level data. No speculative overshooting, geopolitical feedback loops, or cascading financial effects. Random shocks approximate but don't model specific scenarios. Reality has fatter tails than this model generates.
+Parameters derived from analyst and institutional reports, not regression on tick-level data. No speculative overshooting, geopolitical feedback loops, or cascading financial effects. Random shocks approximate but don't model specific scenarios. Reality has fatter tails than this model generates.
 
 Read outputs as "given these structural assumptions, here's the range of plausible outcomes" — not as predictions.
 
 ## Author
 
-[Mariano Andrés Alesandro Díaz](https://github.com/malesandro) · Engine: Claude AI · March 2026
+[Mariano Andrés Alesandro Díaz](https://github.com/malesandro) · Engine: Claude AI · Updated May 2026
 
 ## License
 
 MIT
-```
